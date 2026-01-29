@@ -13,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.viikko1.screens.HomeScreen
+import com.example.viikko1.view.HomeScreen
 import com.example.viikko1.ui.theme.Viikko1Theme
 
 class MainActivity : ComponentActivity() {

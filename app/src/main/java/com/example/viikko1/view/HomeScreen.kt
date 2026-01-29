@@ -1,5 +1,6 @@
-package com.example.viikko1.screens
+package com.example.viikko1.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,16 +25,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.viikko1.domain.Task
+import com.example.viikko1.view.DetailDialog
 import com.example.viikko1.viewModel.TaskViewModel
 
 @Composable
 fun HomeScreen(viewModel: TaskViewModel = viewModel(), darkTheme: Boolean, onThemeToggle: () -> Unit) {
+    val tasks by viewModel.task.collectAsState()
+    val selectedTask by viewModel.selectedTask.collectAsState()
     var newTaskTitle by remember { mutableStateOf(value = "") }
+
 
     Column(modifier = Modifier.padding(all = 16.dp)) {
         Spacer(modifier = Modifier.height(32.dp))
@@ -66,16 +72,7 @@ fun HomeScreen(viewModel: TaskViewModel = viewModel(), darkTheme: Boolean, onThe
 
             Button(onClick = {
                 if (newTaskTitle.isNotBlank()) {
-                    viewModel.addTask(
-                        newTask = Task(
-                            id = viewModel.tasks.size + 1,
-                            title = newTaskTitle,
-                            description = "Added from button",
-                            priority = 1,
-                            dueDate = "2026-02-02",
-                            done = false
-                        )
-                    )
+                    viewModel.addTask(newTaskTitle)
                     newTaskTitle = ""
                 }
             }) { Text(text = "Lisää uusi ") }
@@ -108,11 +105,12 @@ fun HomeScreen(viewModel: TaskViewModel = viewModel(), darkTheme: Boolean, onThe
         Spacer(modifier = Modifier.height(height = 8.dp))
 
         LazyColumn() {
-            items(items = viewModel.tasks) { task ->
+            items(items = tasks) { task ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(all = 8.dp),
+                        .padding(all = 8.dp)
+                        .clickable {viewModel.selectTask(task)},
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Checkbox(
@@ -130,6 +128,11 @@ fun HomeScreen(viewModel: TaskViewModel = viewModel(), darkTheme: Boolean, onThe
                 }
             }
         }
+    }
 
+    if (selectedTask != null) {
+        DetailDialog(task=selectedTask!!, onClose = {viewModel.closeDialog()}, onUpdate = {
+            viewModel.updateTask(it)
+        })
     }
 }
