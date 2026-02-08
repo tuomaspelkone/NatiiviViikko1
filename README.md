@@ -27,3 +27,18 @@ Explain MVVM and why it's useful in Compose applications.
 
 How StateFlow works.
 - StateFlow works like a live container for data. When the data inside changes, it automatically tells the screen to update and to show the new information.
+
+## Week4
+
+Navigation:
+- Jetpack Compose Navigation is used to move between different screens (Composables) and manage the back stack.
+- NavController triggers navigation events, while NavHost is the container that displays the current screen based on the route.
+- The app's structure is defined in MainActivity's NavHost, which holds the routes to all screens. Navigation happens by calling navController.navigate().
+
+Architecture
+- The architecture uses a single, shared TaskViewModel created in MainActivity. This instance is passed to the composable screens.
+- State is shared because both screens observe the same StateFlow from the shared ViewModel. Changes made on one screen are instantly reflected on the other.
+
+Implementation
+- CalendarScreen groups tasks from the ViewModel by their dueDate and displays them chronologically in a LazyColumn.
+- AlertDialogs are used for both creating and editing tasks. AddDialog calls viewModel.addTask, while DetailDialog calls viewModel.updateTask or viewModel.removeTask.
