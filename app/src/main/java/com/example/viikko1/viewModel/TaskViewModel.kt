@@ -28,15 +28,14 @@ public class TaskViewModel : ViewModel() {
         _task.value = mockTasks
     }
 
-    fun addTask(title: String) {
-        // Etsi korkein olemassa oleva ID ja lisää siihen 1, jotta ID on aina yksilöllinen
+    fun addTask(title: String, description: String, dueDate: String) {
         val newId = (allTasks.value.maxOfOrNull { it.id } ?: 0) + 1
         val newTask = Task(
             id = newId,
             title = title,
-            description = "Added from button",
+            description = description,
             priority = 1,
-            dueDate = "2026-02-02",
+            dueDate = dueDate,
             done = false
         )
         allTasks.value = allTasks.value + newTask

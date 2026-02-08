@@ -20,22 +20,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.viikko1.domain.Task
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailDialog(
-    task: Task,
-    onClose: () -> Unit,
-    onUpdate: (Task) -> Unit,
-    onDelete: (Int) -> Unit
-) {
-    var title by remember { mutableStateOf(task.title) }
-    var description by remember { mutableStateOf(task.description) }
-    var dueDate by remember { mutableStateOf(task.dueDate ?: "") }
+fun AddDialog(onClose: () -> Unit, onAddTask: (String, String, String) -> Unit) {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var dueDate by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
@@ -72,7 +66,7 @@ fun DetailDialog(
 
     AlertDialog(
         onDismissRequest = onClose,
-        title = { Text(text = "Muokkaa tehtävää") },
+        title = { Text(text = "Lisää uusi tehtävä") },
         text = {
             Column {
                 TextField(value = title, onValueChange = { title = it }, label = { Text(text = "Nimi") })
@@ -94,18 +88,14 @@ fun DetailDialog(
         },
         confirmButton = {
             Button(onClick = {
-                onUpdate(task.copy(title = title, description = description, dueDate = dueDate))
-                onClose()
+                onAddTask(title, description, dueDate)
             }) {
                 Text(text = "Tallenna")
             }
         },
         dismissButton = {
-            Button(onClick = {
-                onDelete(task.id)
-                onClose()
-            }) {
-                Text(text = "Poista")
+            Button(onClick = onClose) {
+                Text(text = "Peruuta")
             }
         }
     )
