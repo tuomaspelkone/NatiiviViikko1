@@ -20,7 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.viikko1.domain.Task
+import com.example.viikko1.data.local.entity.Task
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,11 +31,11 @@ fun DetailDialog(
     task: Task,
     onClose: () -> Unit,
     onUpdate: (Task) -> Unit,
-    onDelete: (Int) -> Unit
+    onDelete: (Task) -> Unit
 ) {
     var title by remember { mutableStateOf(task.title) }
     var description by remember { mutableStateOf(task.description) }
-    var dueDate by remember { mutableStateOf(task.dueDate ?: "") }
+    var dueDate by remember { mutableStateOf(task.dueDate) }
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
@@ -102,7 +102,7 @@ fun DetailDialog(
         },
         dismissButton = {
             Button(onClick = {
-                onDelete(task.id)
+                onDelete(task)
                 onClose()
             }) {
                 Text(text = "Poista")

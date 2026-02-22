@@ -25,6 +25,8 @@ import com.example.viikko1.view.CalendarScreen
 import com.example.viikko1.view.HomeScreen
 import com.example.viikko1.view.SettingsScreen
 import com.example.viikko1.viewModel.TaskViewModel
+import com.example.viikko1.viewModel.TaskViewModelFactory
+import com.example.viikko1.data.local.entity.Task
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +37,8 @@ class MainActivity : ComponentActivity() {
             var darkTheme by remember { mutableStateOf(systemInDarkTheme) }
 
             val navController = rememberNavController()
-            val viewModel: TaskViewModel = viewModel()
+            // Create shared ViewModel using the factory so repository/db is provided
+            val viewModel: TaskViewModel = viewModel(factory = TaskViewModelFactory(applicationContext))
 
             Viikko1Theme(darkTheme = darkTheme) {
                 Surface(
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         composable(ROUTE_CALENDAR) {
                             CalendarScreen(
                                 viewModel = viewModel,
-                                onTaskClick = { task ->
+                                onTaskClick = { task: Task ->
                                     viewModel.selectTask(task)
                                 },
                                 onNavigateToHome = {

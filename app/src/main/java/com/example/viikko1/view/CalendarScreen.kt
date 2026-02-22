@@ -23,7 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.viikko1.domain.Task
+import com.example.viikko1.data.local.entity.Task
 import com.example.viikko1.viewModel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,9 +33,9 @@ fun CalendarScreen(
     onTaskClick: (Task) -> Unit = {},
     onNavigateToHome: () -> Unit
 ) {
-    val tasks by viewModel.task.collectAsState()
+    val tasks by viewModel.allTasks.collectAsState(initial = emptyList())
     val selectedTask by viewModel.selectedTask.collectAsState()
-    val grouped = tasks.groupBy { it.dueDate ?: "No date" }
+    val grouped = tasks.groupBy { it.dueDate.ifBlank { "No date" } }
 
     Column(modifier = Modifier.padding(all = 16.dp)) {
 
@@ -61,21 +61,22 @@ fun CalendarScreen(
                         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                     )
                 }
-                items(items=tasksOfDay) { task ->
+                items(tasksOfDay) { task ->
                     CalendarTaskCard(
                         task = task,
                         onTaskClick = onTaskClick
                     )
                 }
-                }
+            }
         }
     }
+
     if (selectedTask != null) {
         DetailDialog(
-            task = selectedTask!!, 
-            onClose = { viewModel.closeDialog() }, 
+            task = selectedTask!!,
+            onClose = { viewModel.clearSelected() },
             onUpdate = { viewModel.updateTask(it) },
-            onDelete = { viewModel.removeTask(it) }
+            onDelete = { viewModel.deleteTask(it) }
         )
     }
 }

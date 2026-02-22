@@ -2,6 +2,7 @@ package com.example.viikko1.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -68,14 +70,30 @@ fun AddDialog(onClose: () -> Unit, onAddTask: (String, String, String) -> Unit) 
         onDismissRequest = onClose,
         title = { Text(text = "Lisää uusi tehtävä") },
         text = {
-            Column {
-                TextField(value = title, onValueChange = { title = it }, label = { Text(text = "Nimi") })
-                TextField(value = description, onValueChange = { description = it }, label = { Text(text = "Kuvaus") })
+            Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
+                // Otsikkokenttä
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text(text = "Nimi") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                // Kuvauskenttä (monirivinen)
+                TextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text(text = "Kuvaus (valinnainen)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 3
+                )
+                // Eräpäiväkenttä (readonly, avaa kalenterin)
                 TextField(
                     value = dueDate,
                     onValueChange = { },
                     label = { Text(text = "Eräpäivä") },
                     readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
                     trailingIcon = {
                         Icon(
                             Icons.Default.DateRange,
@@ -88,8 +106,9 @@ fun AddDialog(onClose: () -> Unit, onAddTask: (String, String, String) -> Unit) 
         },
         confirmButton = {
             Button(onClick = {
-                onAddTask(title, description, dueDate)
-            }) {
+                onAddTask(title.trim(), description.trim(), dueDate)
+                onClose()
+            }, enabled = title.isNotBlank()) {
                 Text(text = "Tallenna")
             }
         },
