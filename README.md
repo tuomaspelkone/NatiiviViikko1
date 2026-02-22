@@ -42,3 +42,13 @@ Architecture
 Implementation
 - CalendarScreen groups tasks from the ViewModel by their dueDate and displays them chronologically in a LazyColumn.
 - AlertDialogs are used for both creating and editing tasks. AddDialog calls viewModel.addTask, while DetailDialog calls viewModel.updateTask or viewModel.removeTask.
+
+## Week6
+
+Architecture (Room): My app uses a standard Android architecture. The UI (Compose) talks to the ViewModel, which gets data from the Repository. The Repository is the single source of truth that fetches data from Room (DAO -> Database), which serves as the local database.
+
+Data Flow: It's a reactive, one-way flow. A UI event (like a button click) calls a function in the ViewModel, which tells the Repository what to do. The Repository uses the DAO to modify the database. Since the DAO returns a Flow, Room automatically pushes the updated list of tasks back up the chain, and the UI recomposes to show the changes.
+
+Initial Data Logic: In my app, the AppDatabase has a special mechanism. When the database is created for the very first time, it checks if the task list is empty. If it is, a coroutine launches and pre-populates the database with a set of mockTasks. This ensures the user has some initial data to interact with when they first launch the app. This operation only happens once.
+
+Demo video (finnish): https://www.youtube.com/watch?v=FDycC4eQQio
